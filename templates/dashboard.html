@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard</title>
+    <!-- Add Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Dashboard</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="btn btn-primary mr-2" href="{{ url_for('logout') }}"
+              >Logout</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      <h1 class="mb-4">Welcome to the dashboard!</h1>
+
+      <!-- Buttons section -->
+      <div class="mb-3">
+        <button
+          class="btn btn-success mr-2"
+          data-toggle="modal"
+          data-target="#addStudentModal"
+        >
+          Add a New Student
+        </button>
+        <button
+          class="btn btn-danger mr-2"
+          data-toggle="modal"
+          data-target="#deleteStudentModal"
+        >
+          Delete a Student
+        </button>
+        <button
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#updateStudentModal"
+        >
+          Update an Student
+        </button>
+      </div>
+
+      {% if data %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Date of Birth</th>
+            <th>USN</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
+          <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <!-- Convert USN value to uppercase using the 'upper' filter -->
+            <td>{{ row[3]|upper }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>No data available.</p>
+      {% endif %}
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery (required for some Bootstrap components) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Add Student Modal -->
+    <div
+      class="modal fade"
+      id="addStudentModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="addStudentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addStudentModalLabel">
+              Add a New Student
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Add your content for adding a new student here -->
+            <form
+              id="addStudentForm"
+              action="{{ url_for('dashboard') }}"
+              method="post"
+            >
+              <div class="form-group">
+                <label for="student_name">Name:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="student_name"
+                  name="student_name"
+                  placeholder="Enter student name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="date_of_birth">Date of Birth:</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="date_of_birth"
+                  name="date_of_birth"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="usn">USN (University Serial Number):</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="usn"
+                  name="usn"
+                  placeholder="Enter USN"
+                  required
+                />
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="submit" class="btn btn-success">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Student Modal -->
+    <div
+      class="modal fade"
+      id="deleteStudentModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="deleteStudentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteStudentModalLabel">
+              Delete a Student
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Add your content for deleting a student here -->
+            <form
+              id="deleteStudentForm"
+              action="{{ url_for('delete_student') }}"
+              method="post"
+            >
+              <div class="form-group">
+                <label for="student_name">Student USN:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="student_name"
+                  name="student_name"
+                  placeholder="Enter student USN"
+                  required
+                />
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Update Student Modal -->
+    <div
+      class="modal fade"
+      id="updateStudentModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="updateStudentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateStudentModalLabel">
+              Update a Student
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Add your content for updating a student here -->
+            <form
+              id="updateStudentForm"
+              action="{{ url_for('update_student') }}"
+              method="post"
+            >
+              <div class="form-group">
+                <label for="student_name">Student Name:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="student_name"
+                  name="student_name"
+                  placeholder="Enter student name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="new_name">New Name:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="new_name"
+                  name="new_name"
+                  placeholder="Enter new name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="new_date_of_birth">New Date of Birth:</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="new_date_of_birth"
+                  name="new_date_of_birth"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="new_usn">New USN (University Serial Number):</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="new_usn"
+                  name="new_usn"
+                  placeholder="Enter new USN"
+                  required
+                />
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Your JavaScript code for handling the form submission -->
+    <script>
+      function addStudent() {
+        // Get input values
+        var name = document.getElementById("student_name").value;
+        var dob = document.getElementById("date_of_birth").value;
+        var usn = document.getElementById("usn").value;
+
+        // Append data to the table
+        var table = document.querySelector("table tbody");
+        var newRow = table.insertRow();
+        var idCell = newRow.insertCell(0);
+        var nameCell = newRow.insertCell(1);
+        var dobCell = newRow.insertCell(2);
+        var usnCell = newRow.insertCell(3);
+
+        // Generate a unique ID for the student (for demonstration purposes)
+        var id = Math.floor(Math.random() * 1000);
+
+        // Set the values for the new row
+        idCell.innerHTML = id;
+        nameCell.innerHTML = name;
+        dobCell.innerHTML = dob;
+        usnCell.innerHTML = usn;
+
+        // Close the modal
+        $("#addStudentModal").modal("hide");
+      }
+    </script>
+  </body>
+</html>
